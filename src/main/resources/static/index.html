@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team & Player Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+        h2 {
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f4f4f9;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Team & Player Management</h1>
+</header>
+<div class="container">
+    <!-- Team Management Section -->
+    <div class="section" id="team-section">
+        <h2>Manage Teams</h2>
+        <table id="team-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Coach</th>
+                <th>City</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Dynamically populated -->
+            </tbody>
+        </table>
+        <form id="team-form">
+            <input type="hidden" id="team-id" />
+            <div class="form-group">
+                <label for="team-name">Team Name</label>
+                <input type="text" id="team-name" required />
+            </div>
+            <div class="form-group">
+                <label for="team-coach">Coach</label>
+                <input type="text" id="team-coach" required />
+            </div>
+            <div class="form-group">
+                <label for="team-city">City</label>
+                <input type="text" id="team-city" required />
+            </div>
+            <button type="submit">Save Team</button>
+        </form>
+    </div>
+
+    <!-- Player Management Section -->
+    <div class="section" id="player-section">
+        <h2>Manage Players</h2>
+        <table id="player-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Team</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Dynamically populated -->
+            </tbody>
+        </table>
+        <form id="player-form">
+            <input type="hidden" id="player-id" />
+            <div class="form-group">
+                <label for="player-name">Player Name</label>
+                <input type="text" id="player-name" required />
+            </div>
+            <div class="form-group">
+                <label for="player-position">Position</label>
+                <input type="text" id="player-position" required />
+            </div>
+            <div class="form-group">
+                <label for="player-team">Team</label>
+                <select id="player-team" required>
+                    <!-- Dynamically populated -->
+                </select>
+            </div>
+            <button type="submit">Save Player</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const teams = [];
+    const players = [];
+
+    // Fetch Teams from Backend on Page Load
+    async function fetchTeams() {
+        try {
+            const response = await fetch('/api/teams');
+            if (response.ok) {
+                const data = await response.json();
+                teams.length = 0;
+                teams.push(...data);
+                updateTeamTable();
+                updateTeamDropdown();
+            } else {
+                console.error('Error fetching teams.');
+            }
+        } catch (error) {
+            console.error('Server communication error:', error);
+        }
+    }
+
+    // Fetch Players from Backend on Page Load
+    async function fetchPlayers() {
+        try {
+            const response = await fetch('/api/players');
+            if (response.ok) {
+                const data = await response.json();
+                players.length = 0;
+                players.push(...data);
+                updatePlayerTable();
+            } else {
+                console.error('Error fetching players.');
+            }
+        } catch (error) {
+            console.error('Server communication error:', error);
+        }
+    }
+
+    // Team Form Submission with API Call
+    document.getElementById('team-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const id = document.getElementById('team-id').value;
+        const name = document.getElementById('team-name').value;
+        const coach = document.getElementById('team-coach').value;
+        const city = document.getElementById('team-city').value;
+
+        if (!name || !coach || !city) {
+            alert('All fields are required!');
+            return;
+        }
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `/api/teams/${id}` : '/api/teams';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, name, coach, city }),
+            });
+
+            if (response.ok) {
+                await fetchTeams();
+                this.reset();
+            } else {
+                alert('Error saving team.');
+            }
+        } catch (error) {
+            console.error('Error communicating with server:', error);
+            alert('Unable to connect to the server.');
+        }
+    });
+
+    // Edit Team
+    function editTeam(id) {
+        const team = teams.find(t => t.id === id);
+        if (team) {
+            document.getElementById('team-id').value = team.id;
+            document.getElementById('team-name').value = team.name;
+            document.getElementById('team-coach').value = team.coach;
+            document.getElementById('team-city').value = team.city;
+        }
+    }
+
+    // Update Team Table
+    function updateTeamTable() {
+        const tbody = document.querySelector('#team-table tbody');
+        tbody.innerHTML = '';
+        teams.forEach(team => {
+            const row = `<tr>
+                    <td>${team.id}</td>
+                    <td>${team.name}</td>
+                    <td>${team.coach}</td>
+                    <td>${team.city}</td>
+                    <td>
+                        <button onclick="editTeam(${team.id})">Edit</button>
+                        <button onclick="deleteTeam(${team.id})">Delete</button>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Delete Team
+    async function deleteTeam(id) {
+        try {
+            const response = await fetch(`/api/teams/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                await fetchTeams();
+            } else {
+                alert('Error deleting team.');
+            }
+        } catch (error) {
+            console.error('Error communicating with server:', error);
+        }
+    }
+
+    // Player Form Submission with API Call
+    document.getElementById('player-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const id = document.getElementById('player-id').value;
+        const name = document.getElementById('player-name').value;
+        const position = document.getElementById('player-position').value;
+        const teamId = parseInt(document.getElementById('player-team').value);
+
+        if (!name || !position || !teamId) {
+            alert('All fields are required!');
+            return;
+        }
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `/api/players/${id}` : '/api/players';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, name, position, team: { id: teamId } }),
+            });
+
+            if (response.ok) {
+                await fetchPlayers();
+                this.reset();
+            } else {
+                alert('Error saving player.');
+            }
+        } catch (error) {
+            console.error('Error communicating with server:', error);
+            alert('Unable to connect to the server.');
+        }
+    });
+
+    // Edit Player
+    function editPlayer(id) {
+        const player = players.find(p => p.id === id);
+        if (player) {
+            document.getElementById('player-id').value = player.id;
+            document.getElementById('player-name').value = player.name;
+            document.getElementById('player-position').value = player.position;
+            document.getElementById('player-team').value = player.team.id;
+        }
+    }
+
+    // Update Player Table
+    function updatePlayerTable() {
+        const tbody = document.querySelector('#player-table tbody');
+        tbody.innerHTML = '';
+        players.forEach(player => {
+            const row = `<tr>
+                    <td>${player.id}</td>
+                    <td>${player.name}</td>
+                    <td>${player.position}</td>
+                    <td>${player.team.name}</td>
+                    <td>
+                        <button onclick="editPlayer(${player.id})">Edit</button>
+                        <button onclick="deletePlayer(${player.id})">Delete</button>
+                    </td>
+                </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // Delete Player
+    async function deletePlayer(id) {
+        try {
+            const response = await fetch(`/api/players/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                await fetchPlayers();
+            } else {
+                alert('Error deleting player.');
+            }
+        } catch (error) {
+            console.error('Error communicating with server:', error);
+        }
+    }
+
+    // Update Team Dropdown
+    function updateTeamDropdown() {
+        const dropdown = document.getElementById('player-team');
+        dropdown.innerHTML = '';
+        teams.forEach(team => {
+            const option = `<option value="${team.id}">${team.name}</option>`;
+            dropdown.innerHTML += option;
+        });
+    }
+
+    // Initial Data Fetch
+    fetchTeams();
+    fetchPlayers();
+</script>
+</body>
+</html>

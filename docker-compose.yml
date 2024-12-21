@@ -1,0 +1,32 @@
+
+services:
+  # Service pour la base de données MySQL
+  database:
+    image: mysql:8.0
+    container_name: team_player_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # Service pour l'application Spring Boot
+  app:
+    image: openjdk:17 # Ou l'image correspondante à la version de Java que vous utilisez
+    container_name: team_player_app
+    build:
+      context: .
+      dockerfile: Dockerfile # Si vous avez un Dockerfile pour l'application
+    ports:
+      - "8080:8080" # Mappage du port pour accéder à l'application
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/teamsdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - database
+
+volumes:
+  db_data:
