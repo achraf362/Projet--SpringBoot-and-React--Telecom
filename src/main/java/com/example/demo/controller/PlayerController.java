@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Player;
 import com.example.demo.service.PlayerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +32,8 @@ public class PlayerController {
     // Endpoint pour mettre à jour un joueur
     @PutMapping("/{id}")
     public ResponseEntity<Player> updatePlayer(@PathVariable Long id, @RequestBody Player player) {
-        player.setId(id);
-        return ResponseEntity.ok(playerService.savePlayer(player));
+        Player updatedPlayer = playerService.updatePlayer(id, player);
+        return new ResponseEntity<>(updatedPlayer, HttpStatus.OK);
     }
 
     // Endpoint pour supprimer un joueur

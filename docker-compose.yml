@@ -3,7 +3,7 @@ services:
   # Service pour la base de données MySQL
   database:
     image: mysql:8.0
-    container_name: team_player_db
+    container_name: team_players_db
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
@@ -15,7 +15,7 @@ services:
   # Service pour l'application Spring Boot
   app:
     image: openjdk:17 # Ou l'image correspondante à la version de Java que vous utilisez
-    container_name: team_player_app
+    container_name: team_players_app
     build:
       context: .
       dockerfile: Dockerfile # Si vous avez un Dockerfile pour l'application

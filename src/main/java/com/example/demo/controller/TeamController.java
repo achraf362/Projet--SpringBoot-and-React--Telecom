@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Team;
 import com.example.demo.service.TeamService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,16 +28,11 @@ public class TeamController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Team> updateTeam(@PathVariable Long id, @RequestBody Team updatedTeam) {
-        Team existingTeam = teamService.getTeamById(id);
-        if (existingTeam == null) {
-            return ResponseEntity.notFound().build();
-        }
-        existingTeam.setName(updatedTeam.getName());
-        existingTeam.setCoach(updatedTeam.getCoach());
-        existingTeam.setCity(updatedTeam.getCity());
-        return ResponseEntity.ok(teamService.saveTeam(existingTeam));
+    public ResponseEntity<Team> updateTeam(@PathVariable Long id, @RequestBody Team team) {
+        Team updatedTeam = teamService.updateTeam(id, team);
+        return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {

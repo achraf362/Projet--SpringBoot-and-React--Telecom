@@ -22,7 +22,13 @@ public class TeamService {
     public Team saveTeam(Team team) {
         return teamRepository.save(team);
     }
-
+    public Team updateTeam(Long id, Team updatedTeam) {
+        Team existingTeam = getTeamById(id);
+        existingTeam.setName(updatedTeam.getName());
+        existingTeam.setCoach(updatedTeam.getCoach());
+        existingTeam.setCity(updatedTeam.getCity());
+        return teamRepository.save(existingTeam);
+    }
     public void deleteTeam(Long id) {
         teamRepository.deleteById(id);
     }

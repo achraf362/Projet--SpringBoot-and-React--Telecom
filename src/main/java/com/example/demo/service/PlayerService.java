@@ -27,10 +27,15 @@ public class PlayerService {
     public void deletePlayer(Long id) {
         playerRepository.deleteById(id);
     }
-
+    public Player updatePlayer(Long id, Player updatedPlayer) {
+        Player existingPlayer = getPlayerById(id);
+        existingPlayer.setName(updatedPlayer.getName());
+        existingPlayer.setPosition(updatedPlayer.getPosition());
+        existingPlayer.setTeam(updatedPlayer.getTeam());
+        return playerRepository.save(existingPlayer);
+    }
     public Player getPlayerById(Long id) {
         Optional<Player> player = playerRepository.findById(id);
         return player.orElse(null); // Retourne null si l'équipe n'existe pas
     }
 }
-
