@@ -48,16 +48,35 @@ git clone https://github.com/achraf362/Projet--SpringBoot-and-React--Telecom.git
 cd Projet--SpringBoot-and-React--Telecom
 ```
 
-### 2. Gestion de la base de données avec Docker Compose
-
+2. Gestion de la base de données avec Docker Compose
 La base de données MySQL est automatiquement configurée lors de l’exécution de Docker Compose. Voici ce qui est pris en charge :
 
-- Création automatique de la base de données `teamsdb`.
-- Initialisation des tables et données grâce au fichier `init.sql`.
+- **Création automatique de la base de données `teamsdb`.**
+- **Initialisation des tables et des données grâce au fichier `init.sql`.**
+- **Aucune configuration manuelle n’est nécessaire.**
 
-Aucune configuration manuelle n’est nécessaire.
+Voici le contenu du fichier `init.sql` qui gère l'initialisation de la base de données :
 
----
+```sql
+CREATE DATABASE IF NOT EXISTS teamsdb;
+
+USE teamsdb;
+
+CREATE TABLE IF NOT EXISTS team (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    coach VARCHAR(100),
+    city VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS player (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    position VARCHAR(50),
+    team_id BIGINT,
+    FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE SET NULL
+);
+```
 
 ### 3. Backend : Compilation et packaging
 1. Nettoyer les anciens fichiers de build :
@@ -143,17 +162,109 @@ Aucune configuration manuelle n’est nécessaire.
 ---
 
 ## Fonctionnement des API
-### API Teams (`/api/teams`)
-- **GET** `/api/teams` : Liste toutes les équipes.
-- **POST** `/api/teams` : Crée une nouvelle équipe.
-- **PUT** `/api/teams/{id}` : Met à jour une équipe existante.
-- **DELETE** `/api/teams/{id}` : Supprime une équipe.
+### API Teams (/api/teams)
 
-### API Players (`/api/players`)
-- **GET** `/api/players` : Liste tous les joueurs.
-- **POST** `/api/players` : Crée un nouveau joueur.
-- **PUT** `/api/players/{id}` : Met à jour un joueur existant.
-- **DELETE** `/api/players/{id}` : Supprime un joueur.
+- **GET /api/teams** : Liste toutes les équipes.
+  - Exemple de réponse :
+    ```json
+    [
+        {
+            "id": 1,
+            "name": "Team A",
+            "coach": "Coach A",
+            "city": "City A"
+        },
+        {
+            "id": 2,
+            "name": "Team B",
+            "coach": "Coach B",
+            "city": "City B"
+        }
+    ]
+    ```
+
+- **POST /api/teams** : Crée une nouvelle équipe.
+  - Exemple de requête :
+    ```json
+    {
+        "name": "Team C",
+        "coach": "Coach C",
+        "city": "City C"
+    }
+    ```
+  - Exemple de réponse :
+    ```json
+    {
+        "id": 3,
+        "name": "Team C",
+        "coach": "Coach C",
+        "city": "City C"
+    }
+    ```
+
+- **PUT /api/teams/{id}** : Met à jour une équipe existante.
+  - Exemple de requête :
+    ```json
+    {
+        "name": "Team A Updated",
+        "coach": "Coach A Updated",
+        "city": "City A Updated"
+    }
+    ```
+
+- **DELETE /api/teams/{id}** : Supprime une équipe.
+
+### API Players (/api/players)
+
+- **GET /api/players** : Liste tous les joueurs.
+  - Exemple de réponse :
+    ```json
+    [
+        {
+            "id": 1,
+            "name": "Player A",
+            "position": "Forward",
+            "team_id": 1
+        },
+        {
+            "id": 2,
+            "name": "Player B",
+            "position": "Midfielder",
+            "team_id": 2
+        }
+    ]
+    ```
+
+- **POST /api/players** : Crée un nouveau joueur.
+  - Exemple de requête :
+    ```json
+    {
+        "name": "Player C",
+        "position": "Defender",
+        "team_id": 1
+    }
+    ```
+  - Exemple de réponse :
+    ```json
+    {
+        "id": 3,
+        "name": "Player C",
+        "position": "Defender",
+        "team_id": 1
+    }
+    ```
+
+- **PUT /api/players/{id}** : Met à jour un joueur existant.
+  - Exemple de requête :
+    ```json
+    {
+        "name": "Player A Updated",
+        "position": "Goalkeeper",
+        "team_id": 2
+    }
+    ```
+
+- **DELETE /api/players/{id}** : Supprime un joueur.
 
 ---
 
