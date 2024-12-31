@@ -7,13 +7,21 @@ const App = () => {
         <Router>
             <div className="container mt-4">
                 <h1>Team & Player Management</h1>
-                <nav>
-                    <Link to="/teams" className="btn btn-primary me-2">Manage Teams</Link>
-                    <Link to="/players" className="btn btn-primary">Manage Players</Link>
+                <nav className="d-flex flex-column gap-3">
+                    <Link to="/teams" className="btn btn-primary w-100 custom-btn">
+                        <i className="bi bi-people-fill me-2"></i>
+                        Manage Teams
+                    </Link>
+                    <Link to="/players" className="btn btn-primary w-100 custom-btn">
+                        <i className="bi bi-person-fill me-2"></i>
+                        Manage Players
+                    </Link>
                 </nav>
+
+
                 <Routes>
-                    <Route path="/teams" element={<TeamManagement />} />
-                    <Route path="/players" element={<PlayerManagement />} />
+                    <Route path="/teams" element={<TeamManagement/>}/>
+                    <Route path="/players" element={<PlayerManagement/>}/>
                 </Routes>
             </div>
         </Router>
