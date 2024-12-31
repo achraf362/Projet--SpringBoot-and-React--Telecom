@@ -27,6 +27,7 @@ Ce projet est une application web full-stack permettant de gérer des équipes e
 Projet--SpringBoot-and-React--Telecom/
 ├── backend/          # Code Spring Boot (backend)
 ├── frontend/         # Code React (frontend)
+├── Dockerfile        # Fichier Dockerfile
 ├── docker-compose.yml # Fichier Docker-compose pour simplifier le déploiement
 ├── README.md         # Documentation
 └── .gitignore        # Fichiers à ignorer par Git
