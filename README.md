@@ -48,18 +48,14 @@ git clone https://github.com/achraf362/Projet--SpringBoot-and-React--Telecom.git
 cd Projet--SpringBoot-and-React--Telecom
 ```
 
-### 2. Configurer la base de données MySQL
-1. Modifiez le fichier `application.properties` dans le backend :
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/telecom_db
-   spring.datasource.username=root
-   spring.datasource.password=yourpassword
-   spring.jpa.hibernate.ddl-auto=update
-   ```
-2. Si nécessaire, créez la base de données manuellement :
-   ```sql
-   CREATE DATABASE telecom_db;
-   ```
+### 2. Gestion de la base de données avec Docker Compose
+
+La base de données MySQL est automatiquement configurée lors de l’exécution de Docker Compose. Voici ce qui est pris en charge :
+
+- Création automatique de la base de données `teamsdb`.
+- Initialisation des tables et données grâce au fichier `init.sql`.
+
+Aucune configuration manuelle n’est nécessaire.
 
 ---
 
@@ -90,7 +86,7 @@ cd Projet--SpringBoot-and-React--Telecom
    ```bash
    docker-compose up -d
    ```
-   - **Objectif** : Démarre les services (backend et base de données).
+   - **Objectif** : Démarre les services (backend et base de données) en arrière-plan.
 
 
 ---
@@ -101,13 +97,19 @@ cd Projet--SpringBoot-and-React--Telecom
    cd frontend
    ```
 
-2. Installez les dépendances nécessaires :
+3. Installez les dépendances nécessaires :
    ```bash
    npm install
    ```
+
    - **Objectif** : Télécharge toutes les bibliothèques nécessaires.
 
-3. Lancez l'application React :
+2. Naviguez dans le dossier `team-player-management` :
+   ```bash
+    cd .\team-player-management\
+   ```
+
+4. Lancez l'application React :
    ```bash
    npm start
    ```
